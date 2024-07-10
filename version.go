@@ -1,4 +1,0 @@
-// pkg/version/version.go
-package main
-
-const Version = "1.0.0"
