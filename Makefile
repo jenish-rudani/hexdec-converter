@@ -8,6 +8,10 @@ INSTALL_DIR_LINUX := /usr/local/bin
 INSTALL_DIR_MACOS := /usr/local/bin
 INSTALL_DIR_WINDOWS := C:\Windows\System32
 
+VERSION := $(shell git describe --tags --always --dirty)
+LDFLAGS := -ldflags "-X main.Version=$(VERSION)"
+
+
 .PHONY: all clean test
 
 all: $(BINARIES)
@@ -19,9 +23,9 @@ $(BINARIES):
 			output_dir="binary/$$platform"; \
 			mkdir -p $$output_dir; \
 			if [ $$platform = "windows" ]; then \
-				GOOS=$$platform GOARCH=$$arch go build -o $$output_dir/$@_$${arch}.exe ./cmd/$@; \
+				GOOS=$$platform GOARCH=$$arch go build $(LDFLAGS) -o $$output_dir/$@_$${arch}.exe ./cmd/$@; \
 			else \
-				GOOS=$$platform GOARCH=$$arch go build -o $$output_dir/$@_$${arch} ./cmd/$@; \
+				GOOS=$$platform GOARCH=$$arch go build $(LDFLAGS) -o $$output_dir/$@_$${arch} ./cmd/$@; \
 			fi; \
 		done; \
 		if [ $$platform = "darwin" ]; then \
