@@ -170,5 +170,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-[MIT License](LICENSE)
+[GNU General Public License v3.0](LICENSE)
+```
+See License file for more details
 ```
