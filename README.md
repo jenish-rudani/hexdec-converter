@@ -1,6 +1,6 @@
 # Hexadecimal-Decimal Converter
 
-This Go module provides command-line utilities for converting between hexadecimal and decimal numbers.
+This Go module provides command-line utilities for converting between hexadecimal and decimal numbers, plus `bitcalc` for evaluating bitwise and arithmetic expressions.
 
 ## Table of Contents
 
@@ -54,6 +54,20 @@ Convert decimal to hexadecimal:
 d2h <decimal number>
 ```
 
+Evaluate a bitwise/arithmetic expression:
+
+```bash
+bitcalc <expression>
+```
+
+`bitcalc` accepts decimal (`42`), hex (`0x2A`), and binary (`0b101010`) literals.
+It supports the operators `~ << >> & | ^ + - * / %` and parentheses, following
+C-style precedence, and all math is done in 64-bit unsigned arithmetic. The
+result is printed in decimal, hex, and binary.
+
+> Note: shell metacharacters such as `<<`, `&`, `|`, and `(` must be quoted, so
+> wrap the expression in quotes: `bitcalc '1 << 2 & 0x03'`.
+
 ### Examples
 
 Here are some examples of how to use the utilities:
@@ -84,6 +98,30 @@ Here are some examples of how to use the utilities:
    100
    ```
 
+3. Bitwise/Arithmetic Calculator:
+
+   ```bash
+   $ bitcalc '1 << 21'
+   2097152
+   0x200000
+   0b1000000000000000000000
+
+   $ bitcalc '1 & 0x03'
+   1
+   0x1
+   0b1
+
+   $ bitcalc '1 << 2 & 0x03'
+   0
+   0x0
+   0b0
+
+   $ bitcalc '~0'
+   18446744073709551615
+   0xFFFFFFFFFFFFFFFF
+   0b1111111111111111111111111111111111111111111111111111111111111111
+   ```
+
 ## Building
 
 To build binaries for multiple platforms:
@@ -111,12 +149,17 @@ hexdec-converter/
 ├── cmd/
 │   ├── h2d/
 │   │   └── main.go
-│   └── d2h/
+│   ├── d2h/
+│   │   └── main.go
+│   └── bitcalc/
 │       └── main.go
 ├── pkg/
-│   └── converter/
-│       ├── converter.go
-│       └── converter_test.go
+│   ├── converter/
+│   │   ├── converter.go
+│   │   └── converter_test.go
+│   └── calculator/
+│       ├── calculator.go
+│       └── calculator_test.go
 ├── test/
 │   └── integration_test.go
 ├── Makefile
@@ -124,8 +167,8 @@ hexdec-converter/
 └── README.md
 ```
 
-- `cmd/`: Contains the main applications for h2d and d2h.
-- `pkg/`: Contains the core logic for conversion in the converter package.
+- `cmd/`: Contains the main applications for h2d, d2h, and bitcalc.
+- `pkg/`: Contains the core logic — the `converter` package (hex/dec conversion) and the `calculator` package (expression evaluation).
 - `test/`: Contains integration tests for the command-line tools.
 
 ## Development
@@ -153,10 +196,12 @@ Hexadecimal-Decimal Converter
 Usage:
   h2d <hexadecimal number>  - Convert hex to decimal
   d2h <decimal number>      - Convert decimal to hex
+  bitcalc <expression>      - Evaluate a bitwise/arithmetic expression
 
 Examples:
-  h2d FF  -> 255
-  d2h 255 -> FF
+  h2d FF             -> 255
+  d2h 255            -> FF
+  bitcalc '1 << 21'  -> 2097152 / 0x200000 / 0b...0
 
 Build:   make
 Test:    make test

@@ -80,3 +80,26 @@ func TestD2HIntegration(t *testing.T) {
 		}
 	}
 }
+
+func TestBitcalcIntegration(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string // decimal, hex, binary lines joined by newline
+	}{
+		{"1 << 21", "2097152\n0x200000\n0b1000000000000000000000"},
+		{"1 & 0x03", "1\n0x1\n0b1"},
+		{"1 << 2 & 0x03", "0\n0x0\n0b0"},
+	}
+
+	for _, test := range tests {
+		cmd := exec.Command("go", "run", "../cmd/bitcalc/main.go", test.input)
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Errorf("bitcalc failed for input %q: %v", test.input, err)
+		}
+		result := strings.TrimSpace(string(output))
+		if result != test.expected {
+			t.Errorf("bitcalc(%q) = %q, expected %q", test.input, result, test.expected)
+		}
+	}
+}
